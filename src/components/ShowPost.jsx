@@ -16,7 +16,7 @@ function ShowPost() {
     .then(response => response.json())
     .then(data => setPosts(data))
     .catch(error => console.error('Error fetching posts:', error));
-  }, [token]);
+  }, [posts,token]);
 
   return (
     <div>
@@ -25,7 +25,7 @@ function ShowPost() {
         <ul>
           {posts.data.map((post) => (
             <li key={post.id}>
-                <p>Post de {post.attributes.users_permissions_user.data.attributes.username}</p>
+                <p>Post de {post.attributes.users_permissions_user.data.attributes.username !== null ? post.attributes.users_permissions_user.data.attributes.username: "?"}</p>
               <p>{post.attributes.text}</p>
               <p>likes : {post.attributes.users_likes.data.length !==  0 ?post.attributes.users_likes.data.length : 0}</p>
             </li>

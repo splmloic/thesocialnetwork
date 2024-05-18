@@ -1,16 +1,32 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import Cookies from "js-cookie";
 
 function NewPost() {
   const [post, setPost] = useState("");
+  const [userId,setUserId]=useState(null);
   const token = Cookies.get("token");
+
+  useEffect(()=>{
+    fetch('http://localhost:1337/api/users/me',{
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data=> {setUserId(data.id)})
+  },[token])
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = {
-      text: post,
+        data:{
+            text: post,
+            users_permissions_user: userId
+        }
     };
-
+    
     try {
       const response = await fetch('http://localhost:1337/api/posts', {
         method: 'POST',
