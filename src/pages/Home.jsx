@@ -5,6 +5,7 @@ import Cookies from 'js-cookie'
 
 function Home(){
     const token = Cookies.get('token');
+
     if(!token){
         return(
             <div>

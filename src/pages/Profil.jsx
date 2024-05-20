@@ -1,102 +1,51 @@
 import React,{useState,useEffect} from "react";
+import { useParams } from "react-router-dom";
 import Cookies from 'js-cookie'; 
 
 function Profil(){
-  const [userInfo,setUserInfo] =useState("");
-    const [username,setUsername] = useState("");
-    const [desc,setDesc] = useState("");
-    const [email,setEmail] = useState("");
 
-    const Auth = Cookies.get("token");
+  const { userSlug } = useParams();
+  const [userInfo,setUserInfo] =useState(null);
+  const token = Cookies.get("token");
 
     useEffect(()=>{
-        if(Auth){
-            fetch('http://localhost:1337/api/users/me',{
+        if(token && userSlug){
+            fetch(`http://localhost:1337/api/users?filters[username][$eq]=${userSlug}&populate=post_likeds`,{
                 method: 'GET',
                 headers: {
-                  'Authorization': `Bearer ${Auth}`,
+                  'Authorization': `Bearer ${token}`,
                   'Content-Type': 'application/json'
                 }
             })
             .then(response => response.json())
             .then(data => {
-                setUserInfo(data);
-                setEmail(data.email);
-                setUsername(data.username);
-                setDesc(data.description);
+                setUserInfo(data[0]);
             })
+            .catch(error => console.error('Error fetching user:', error));
         }
-    }, [Auth])
+    }, [userSlug, token])
 
-    const handleUpdate = async (e) => {
-      e.preventDefault();
-      if (!userInfo) {
-        return;
-      }
-      const data = {
-        username,
-        email,
-        desc // Ajout de la description dans les données envoyées
-      };
-      try {
-        const response = await fetch(`http://localhost:1337/api/users/${userInfo.id}`, { // Utilisation correcte de l'ID de l'utilisateur
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${Auth}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        });
-  
-        const updatedUser = await response.json();
-        setUserInfo(updatedUser);
-      } catch (error) {
-        console.error('Error updating user data:', error);
-      }
-    };
-
-    if(!Auth){
-        return(
-            <div>
-                <h1>Profil</h1>
-                <p>Connecté-vous</p>
-            </div>
-        )
-    } 
+    if (!userInfo) {
+      return <p>Loading...</p>;
+    }  
     return(
         <div>
-            <h1>Profil</h1>
-            <p>Connecté </p>
-            <p>{username}</p>
-            <p>{email}</p>
-            <p>{desc}</p>
-            <form onSubmit={handleUpdate}>
-            <div>
-              <label>Nom d'utilisateur:</label>
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-              />
-            </div>
-            <div>
-              <label>description:</label>
-              <input
-                type="description"
-                value={desc}
-                onChange={(e) => setDesc(e.target.value)}
-              />
-            </div>
-            <div>
-              <label>Email:</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <button type="submit">Mettre à jour</button>
-          </form>
+          <h1>Profil de {userInfo.username}</h1>
+          <p>description: {userInfo.description ? userInfo.description :"Cet utilisateur n'as pas de description"}</p>
+          <div>
+          <p>Likes de l'utilisateur</p>
+          {userInfo.post_likeds && userInfo.post_likeds.length > 0 ? (
+            <ul>
+              {userInfo.post_likeds.map(post => (
+                <li key={post.id}>
+                  {post.text}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            "Cet utilisateur n'a pas liké de post"
+          )}
+        </div>
         </div>
     )
 

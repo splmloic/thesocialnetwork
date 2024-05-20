@@ -1,14 +1,16 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
+import { useAtom } from 'jotai';
+import { refreshAtom } from '../atoms/getPost';
 
 function NewPost() {
   const [post, setPost] = useState("");
-  const [userId,setUserId]=useState(null);
-  const [send,setSend]=useState(false);
+  const [userId, setUserId] = useState(null);
+  const [, setRefresh] = useAtom(refreshAtom); // Utiliser l'atom de rafraîchissement
   const token = Cookies.get("token");
 
-  useEffect(()=>{
-    fetch('http://localhost:1337/api/users/me',{
+  useEffect(() => {
+    fetch('http://localhost:1337/api/users/me', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -16,19 +18,19 @@ function NewPost() {
         }
     })
     .then(response => response.json())
-    .then(data=> {setUserId(data.id)})
-    .then(setSend(false))
-  },[send,token])
+    .then(data => { setUserId(data.id); })
+    .catch(error => console.error('Error fetching user:', error));
+  }, [token]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = {
-        data:{
+        data: {
             text: post,
             users_permissions_user: userId
         }
     };
-    
+
     try {
       const response = await fetch('http://localhost:1337/api/posts', {
         method: 'POST',
@@ -41,7 +43,7 @@ function NewPost() {
 
       if (response.ok) {
         setPost("");
-        setSend(true);
+        setRefresh(prev => prev + 1); // Rafraîchir la liste des posts
         const responseData = await response.json();
         console.log('Post added:', responseData);
       } else {
