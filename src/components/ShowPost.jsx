@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { NavLink } from 'react-router-dom';
 import Cookies from "js-cookie";
 
 function ShowPost() {
@@ -25,9 +26,10 @@ function ShowPost() {
         <ul>
           {posts.data.map((post) => (
             <li key={post.id}>
-                <p>Post de {post.attributes.users_permissions_user.data.attributes.username !== null ? post.attributes.users_permissions_user.data.attributes.username: "?"}</p>
+                <p>Post de <NavLink to={`/profil/${post.attributes.users_permissions_user.data.attributes.username}`}>{post.attributes.users_permissions_user.data.attributes.username !== null ? post.attributes.users_permissions_user.data.attributes.username: "?"}</NavLink></p>
               <p>{post.attributes.text}</p>
               <p>likes : {post.attributes.users_likes.data.length !==  0 ?post.attributes.users_likes.data.length : 0}</p>
+              <button onClick="">Like</button>
             </li>
           ))}
         </ul>

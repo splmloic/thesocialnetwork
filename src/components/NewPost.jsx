@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 function NewPost() {
   const [post, setPost] = useState("");
   const [userId,setUserId]=useState(null);
+  const [send,setSend]=useState(false);
   const token = Cookies.get("token");
 
   useEffect(()=>{
@@ -16,7 +17,8 @@ function NewPost() {
     })
     .then(response => response.json())
     .then(data=> {setUserId(data.id)})
-  },[token])
+    .then(setSend(false))
+  },[send,token])
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,6 +41,7 @@ function NewPost() {
 
       if (response.ok) {
         setPost("");
+        setSend(true);
         const responseData = await response.json();
         console.log('Post added:', responseData);
       } else {
