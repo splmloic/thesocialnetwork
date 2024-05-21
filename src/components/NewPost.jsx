@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 import { useAtom } from 'jotai';
 import { refreshAtom } from '../atoms/getPost';
+import {userAtom} from '../atoms/getUser'
 
 function NewPost() {
   const [post, setPost] = useState("");
   const [userId, setUserId] = useState(null);
   const [, setRefresh] = useAtom(refreshAtom); // Utiliser l'atom de rafraîchissement
   const token = Cookies.get("token");
+  const [user] = useAtom(userAtom);
 
   useEffect(() => {
     fetch('http://localhost:1337/api/users/me', {
@@ -55,20 +57,25 @@ function NewPost() {
   };
 
   return (
-    <div>
-      <h2>Ajoutez un post</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Votre message : </label>
-          <textarea
-            type="text"
-            value={post}
-            onChange={(e) => setPost(e.target.value)}
-          />
+    <div className="w-full p-4 bg-slate-100 rounded-md shadow-md">
+    <h2 className="text-xl font-semibold mb-4 text-center">Salut {user.username}, Ajoute un post</h2>
+    <form onSubmit={handleSubmit} className="flex flex-col">
+        <div className="mb-4">
+            <textarea
+                className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                type="text"
+                value={post}
+                onChange={(e) => setPost(e.target.value)}
+            />
         </div>
-        <button type="submit">Submit</button>
-      </form>
-    </div>
+        <button
+            type="submit"
+            className="self-end px-4 py-2 bg-purple-500 text-white rounded-md hover:bg-purple-600"
+        >
+            Post
+        </button>
+    </form>
+</div>
   );
 }
 

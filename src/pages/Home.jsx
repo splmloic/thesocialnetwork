@@ -8,14 +8,13 @@ function Home(){
 
     if(!token){
         return(
-            <div>
-                <h1>Home</h1>
-                <p>Pour acceder a l'application veuillez vous connecter/vous inscrire</p>
+            <div className="container mx-auto flex flex-col items-center bg-orange-50">
+                <p  className="text-sm text-gray-700">Pour acceder a l'application veuillez vous connecter/vous inscrire</p>
             </div>
         )
     }
     return(
-        <div className="container mx-auto flex flex-col items-center">
+        <div className="container mx-auto flex flex-col items-center bg-orange-50">
         <div className="w-full md:w-1/2">
             <NewPost />
         </div>
