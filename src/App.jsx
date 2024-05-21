@@ -8,7 +8,7 @@ import Navbar from './components/Navbar'
 
 function App() {
   return (
-    <>
+    <main>
       <BrowserRouter>
       <Navbar/>
       <Routes>
@@ -18,7 +18,7 @@ function App() {
             <Route path="/profil/:userSlug" element={<Profil/>}/>
       </Routes>
       </BrowserRouter>
-    </>
+    </main>
   )
 }
 

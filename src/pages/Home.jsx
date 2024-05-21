@@ -15,10 +15,13 @@ function Home(){
         )
     }
     return(
-        <div>
-            <h1>Home</h1>
-            <NewPost/>
-            <ShowPost/>
+        <div className="container mx-auto flex flex-col items-center">
+        <div className="w-full md:w-1/2">
+            <NewPost />
+        </div>
+        <div className="w-full md:w-1/2 mt-4">
+            <ShowPost />
+        </div>
         </div>
     )
 }

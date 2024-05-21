@@ -2,27 +2,19 @@ import React from "react";
 import { NavLink } from 'react-router-dom';
 import {useAtom} from 'jotai'
 import { postsAtom } from "../atoms/getPost";
+import { likeAtom } from "../atoms/likePost";
+import { userAtom } from '../atoms/getUser';
+
 import Cookies from "js-cookie";
 
 function ShowPost() {
   const token = Cookies.get("token");
   const [posts] = useAtom(postsAtom);
+  const [, likePost] = useAtom(likeAtom);
+  const [user] = useAtom(userAtom); 
 
   const handleLike = async (postId) => {
-    const data = {
-          like: postId,
-          users_likes: token
-      }
-
-    try {
-      const response = await fetch(`http://localhost:1337/api/posts/${postId}`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
+    await likePost(postId);
   };
 
   return (
@@ -35,7 +27,9 @@ function ShowPost() {
                 <p>Post de <NavLink to={`/profil/${post.attributes.users_permissions_user.data.attributes.username}`}>{post.attributes.users_permissions_user.data.attributes.username}</NavLink></p>
               <p>{post.attributes.text}</p>
               <p>likes : {post.attributes.users_likes.data.length !==  0 ?post.attributes.users_likes.data.length : 0}</p>
-              <button onClick={() => handleLike(post.id)}>Like</button>
+              <button onClick={() => 
+                handleLike(post.id)
+              }>Like</button>
             </li>
           ))}
         </ul>
